@@ -84,6 +84,10 @@ body {
     font-size: calc((var(--CORNER_HEXAGON) / 3) * 1vb);
 }
 
+.special_num {
+    color: rgb(227, 2, 2);
+}
+
 .bottom_of_lumber {
     position: absolute;
     width: var(--WIDTH_LAMBUR_BLOCK);

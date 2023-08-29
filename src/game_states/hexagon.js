@@ -11,8 +11,10 @@ class Hexagon {
 
     create_a_num_place() {
         let plus = 0;
+        let my_class = " num";
+        if (this.num === 6 || this.num === 8) my_class += " special_num";
         if (this.num >= 10) {plus = - (WIDTH_SQUARE / 7);}
-        let my_num = create_a_element(this.num_left + plus, this.num_top, " num")
+        let my_num = create_a_element(this.num_left + plus, this.num_top, my_class)
         my_num.innerHTML += this.num;
         if (this.type === "water" || this.type == "desert") my_num.style.visibility = "hidden";
         return my_num;

@@ -13,7 +13,8 @@ function create_hexagons(plus_x, plus_y, list) {
     for (let i = 0; i < list.length; i++) {
         x += plus_x;
         y += plus_y;
-        new Hexagon(y,x, list[i][0], list[i][1]);
+        console.log(list[0])
+        new Hexagon(y,x, list[i].num, list[i].hexagon_type.toLowerCase());
     }
 }
 

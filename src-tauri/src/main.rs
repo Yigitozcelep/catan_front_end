@@ -2,15 +2,16 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn get_random_map() -> String{
+    catan_game::frontend_communucation::send_info::get_random_map()
 }
 
 fn main() {
-    let res = catan_game::frontend_communucation::send_info::get_random_map();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![get_random_map])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
