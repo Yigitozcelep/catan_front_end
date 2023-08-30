@@ -1,23 +1,33 @@
-import { WIDTH_HEXAGON, HEIGHT_HEXAGON} from "./constants.js";
-import Hexagon from "./hexagon.js";
 
-const DISTANCE_X = (WIDTH_HEXAGON / 2) + 0.02;
-const DISTANCE_Y = (HEIGHT_HEXAGON - HEIGHT_HEXAGON / 4) + 0.02;
-let x = 0;
-let y = HEIGHT_HEXAGON + (HEIGHT_HEXAGON / 2) + DISTANCE_Y;
+let x = 50
+let y = 200
 
-x += -DISTANCE_X / 2;
+const DISTANCE_X = 45.5;
+const DISTANCE_Y = 75;
+
+let i = 0;
+
+function create_svg(el, scale) {
+    console.log(`${i}`, el);
+    i += 1;
+    let div = document.createElement("div");
+        div.style.position = "absolute"
+        div.style.top = `${y}px`;
+        div.style.left = `${x}px`;
+        fetch(`./svg/hexagons/${el.hexagon_type.toLowerCase()}_hexagon.svg`).then(r => r.text()).then(text => {
+        div.innerHTML += text;
+    }).catch(console.error.bind(console));
+    document.getElementById("main_div").appendChild(div);
+}
 
 
 function create_hexagons(plus_x, plus_y, list) {
     for (let i = 0; i < list.length; i++) {
         x += plus_x;
         y += plus_y;
-        console.log(list[0])
-        new Hexagon(y,x, list[i].num, list[i].hexagon_type.toLowerCase());
+        create_svg(list[i], 1);
     }
 }
-
 
 function create_diognal_right_down(list) {create_hexagons(DISTANCE_X, DISTANCE_Y, list);}
 function create_left_to_right(list) {create_hexagons(DISTANCE_X * 2, 0, list)}
@@ -27,7 +37,7 @@ function create_right_to_left(list) {create_hexagons(-DISTANCE_X * 2, 0, list);}
 function create_diognal_left_down(list) {create_hexagons(-DISTANCE_X, DISTANCE_Y, list)}
 function create_middle(list) {create_diognal_right_down(list);}
 
-function create_map(list) {
+export default function create_map(list) {
     let i = 0;
     let plus;
     let function_array = [
@@ -46,5 +56,3 @@ function create_map(list) {
     }
     create_middle(list.slice(list.length -1, list.length));
 }
-
-export default create_map;
