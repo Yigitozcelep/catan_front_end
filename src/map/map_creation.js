@@ -1,20 +1,16 @@
 
-let x = 50
-let y = 200
+let x = 30
+let y = 230
 
-const DISTANCE_X = 45.5;
-const DISTANCE_Y = 75;
+const DISTANCE_X = 54.5;
+const DISTANCE_Y = 90;
 
-let i = 0;
-
-function create_svg(el, scale) {
-    console.log(`${i}`, el);
-    i += 1;
+function create_svg(cur_x, cur_y, scale, address) {
     let div = document.createElement("div");
         div.style.position = "absolute"
-        div.style.top = `${y}px`;
-        div.style.left = `${x}px`;
-        fetch(`./svg/hexagons/${el.hexagon_type.toLowerCase()}_hexagon.svg`).then(r => r.text()).then(text => {
+        div.style.left = `${cur_x}px`;
+        div.style.top = `${cur_y}px`;
+        fetch(address).then(r => r.text()).then(text => {
         div.innerHTML += text;
     }).catch(console.error.bind(console));
     document.getElementById("main_div").appendChild(div);
@@ -25,7 +21,10 @@ function create_hexagons(plus_x, plus_y, list) {
     for (let i = 0; i < list.length; i++) {
         x += plus_x;
         y += plus_y;
-        create_svg(list[i], 1);
+        create_svg(x,y, 1, `./svg/hexagons/${list[i].hexagon_type}_hexagon.svg`);
+        if (list[i].hexagon_type === "water") continue;
+        create_svg(x + 34, y + 30, 1, `./svg/shapes/${list[i].hexagon_type}.svg`)
+        create_svg(x + 41, y+70, 1, `./svg/nums/num${list[i].num}.svg`)
     }
 }
 
