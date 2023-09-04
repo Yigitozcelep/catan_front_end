@@ -16,7 +16,7 @@ tauri-build = { version = "1.4", features = [] }
 tauri = { version = "1.4", features = ["shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-catan_game = {git="https://github.com/Yigitozcelep/catan_game.git", branch="main"}
+catan_game = {path="/Users/yigitozcelep/Desktop/codes/rust/catan_game"}
 
 
 [features]
