@@ -3,14 +3,18 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
+use catan_game::frontend_communucation::communucation;
+
 #[tauri::command]
-fn get_random_map() -> String{
-    catan_game::frontend_communucation::send_info::get_random_map()
-}
+fn get_random_map() -> String{ communucation::get_random_map() }
+
+#[tauri::command]
+fn get_housable_points(data: String) -> String{ communucation::get_housable_points()}
+
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_random_map])
+        .invoke_handler(tauri::generate_handler![get_random_map, get_housable_points])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

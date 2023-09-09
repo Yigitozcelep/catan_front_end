@@ -1,3 +1,4 @@
+import {create_svg } from "../helper_functions.js";
 
 let x = 30
 let y = 230
@@ -11,38 +12,11 @@ const PORT_DISTANCE = [[-85,20], [-40, 90], [55,90], [55,90], [105,25], [55,-62]
 const SHAPE_DISTANCE = [[-64,27], [-20, 130], [108,132], [108,130], [155,35], [105,-55], [105,-55], [-7, -63], [-65,28]]
 
 
-function create_svg(cur_x, cur_y, scale, address, color) {
-    let div = document.createElement("div");
-        div.style.position = "absolute"
-        div.style.left = `${cur_x}px`;
-        div.style.top = `${cur_y}px`;
-        fetch(address).then(r => r.text()).then(text => {
-        let parser = new DOMParser();
-        let my_svg = parser.parseFromString(text, "image/svg+xml");
-        let viewBox = my_svg.documentElement.getAttribute("viewBox").split(/\s+|,/);
-        let width = my_svg.documentElement.getAttribute("width")
-        let height = my_svg.documentElement.getAttribute("height");
-        let view_width = viewBox[2] * scale;
-        let view_height = viewBox[3] * scale
-        my_svg.documentElement.setAttribute("viewBox", "0 0" + " " + view_width + " " + view_height); 
-        if (color !== "") {
-            
-            let svgShapes = my_svg.documentElement.querySelectorAll('path');
-            svgShapes.forEach(function(shape) {
-                shape.setAttribute('fill', 'black');
-            });
-        }
-        div.appendChild(my_svg.documentElement);
-    
-    }).catch(console.error.bind(console));
-    document.getElementById("main_div").appendChild(div);
-}
-
 function create_port(el) {
     let [port_x, port_y] = PORT_DISTANCE[port_counter];
     let [shape_x, shape_y] = SHAPE_DISTANCE[port_counter];
     create_svg(x + port_x,y + port_y, 1,`./svg/ports/port${PORT_NUMS[port_counter]}.svg`, "");
-    create_svg(x + shape_x, y + shape_y, 2, `./svg/shapes/${el.port}.svg`, "#000000")
+    create_svg(x + shape_x, y + shape_y, 2, `./svg/shapes/${el.port.toLowerCase()}.svg`, "#000000")
     let address = el.port === "questionmark" ? `./svg/ports/num31.svg` : `./svg/ports/num21.svg`;
     create_svg(x + shape_x + 4, y + shape_y + 19, 2, address, "#000000")
     port_counter += 1;
@@ -88,3 +62,5 @@ export default function create_map(list) {
     }
     create_middle(list.slice(list.length -1, list.length));
 }
+
+export {create_svg}

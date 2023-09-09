@@ -1,0 +1,10 @@
+#point {
+    animation: zoom 1.3s infinite;
+}
+
+
+@keyframes zoom {
+    0% {transform: scale(1);}
+    50% {transform: scale(0.93);}
+    100% {transform: scale(1);}
+}
