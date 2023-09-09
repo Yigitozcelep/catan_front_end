@@ -9,7 +9,7 @@ use catan_game::frontend_communucation::communucation;
 fn get_random_map() -> String{ communucation::get_random_map() }
 
 #[tauri::command]
-fn get_housable_points(data: String) -> String{ communucation::get_housable_points()}
+fn get_housable_points() -> String{communucation::get_housable_points()}
 
 
 fn main() {
@@ -18,4 +18,3 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-

@@ -1,4 +1,4 @@
-import {create_svg } from "../helper_functions.js";
+import {create_svg, add_color, z_index, scale} from "../helper_functions.js";
 
 let x = 30
 let y = 230
@@ -15,10 +15,10 @@ const SHAPE_DISTANCE = [[-64,27], [-20, 130], [108,132], [108,130], [155,35], [1
 function create_port(el) {
     let [port_x, port_y] = PORT_DISTANCE[port_counter];
     let [shape_x, shape_y] = SHAPE_DISTANCE[port_counter];
-    create_svg(x + port_x,y + port_y, 1,`./svg/ports/port${PORT_NUMS[port_counter]}.svg`, "");
-    create_svg(x + shape_x, y + shape_y, 2, `./svg/shapes/${el.port.toLowerCase()}.svg`, "#000000")
+    create_svg(x + port_x, y + port_y, `./svg/ports/port${PORT_NUMS[port_counter]}.svg`, [z_index("1")]);
+    create_svg(x + shape_x, y + shape_y, `./svg/shapes/${el.port.toLowerCase()}.svg`, [z_index("2"), add_color("#000000"), scale("0.5")]);
     let address = el.port === "questionmark" ? `./svg/ports/num31.svg` : `./svg/ports/num21.svg`;
-    create_svg(x + shape_x + 4, y + shape_y + 19, 2, address, "#000000")
+    create_svg(x + shape_x + 4, y + shape_y + 19, address, [z_index("2"), add_color("#000000"), scale("0.5")]);
     port_counter += 1;
 }
 
@@ -26,11 +26,11 @@ function create_hexagons(plus_x, plus_y, list) {
     for (let i = 0; i < list.length; i++) {
         x += plus_x;
         y += plus_y;
-        create_svg(x,y, 1, `./svg/hexagons/${list[i].hexagon_type}_hexagon.svg`, "");
+        create_svg(x,y,`./svg/hexagons/${list[i].hexagon_type}_hexagon.svg`);
         if (list[i].hexagon_type === "water") continue;
-        create_svg(x + 34, y + 30, 1, `./svg/shapes/${list[i].hexagon_type}.svg`, "")
-        if (list[i].hexagon_type === "desert") create_svg(x + 23, y + 55, 1, "./svg/shapes/knight.svg", "");
-        else create_svg(x + 41, y + 70, 1, `./svg/nums/num${list[i].num}.svg`, "")
+        create_svg(x + 34, y + 30, `./svg/shapes/${list[i].hexagon_type}.svg`, [z_index("1")])
+        if (list[i].hexagon_type === "desert") create_svg(x + 23, y + 55, "./svg/shapes/knight.svg", [z_index("1")]);
+        else create_svg(x + 41, y + 70, `./svg/nums/num${list[i].num}.svg`, [z_index("1")])
         if (list[i].port !== "none") create_port(list[i]);
     }
 }
