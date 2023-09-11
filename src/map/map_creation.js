@@ -1,66 +1,69 @@
-import {create_svg, add_color, z_index, scale} from "../helper_functions.js";
+import {createSvg, addColor, zIndex, scale} from "../helper_functions.js";
 
-let x = 30
-let y = 230
+let x = 5
+let y = 20
 
-const DISTANCE_X = 54.5;
-const DISTANCE_Y = 90;
+const DISTANCE_X = 4.4; 
+const DISTANCE_Y = 7.65;
 
-let port_counter = 0;
+let portCounter = 0;
 const PORT_NUMS = [1,2,3,3,4,5,5,6,1];
-const PORT_DISTANCE = [[-85,20], [-40, 90], [55,90], [55,90], [105,25], [55,-62], [55,-62], [-30, -70], [-85,20]]
-const SHAPE_DISTANCE = [[-64,27], [-20, 130], [108,132], [108,130], [155,35], [105,-55], [105,-55], [-7, -63], [-65,28]]
+const PORT_HEIGHT_WIDTH = [[4.5, 5.85], [5.49, 5.13],   [5.13, 5.4],    [4.41, 5.85], [5.04, 5.49], [5.04, 5.67]]
+const PORT_DISTANCE =     [[-4, 2.2],   [-0.3, 7.4],    [4, 7.4],       [8.5, 2],     [4.1,-2.6],   [-0.4,-2.8]]
+const SHIP_DISTANCE =     [[-7, 2.2],   [-3, 10],       [6, 10],        [10, 2],      [6,-5.5],     [-2.8,-5.5]]
 
 
-function create_port(el) {
-    let [port_x, port_y] = PORT_DISTANCE[port_counter];
-    let [shape_x, shape_y] = SHAPE_DISTANCE[port_counter];
-    create_svg(x + port_x, y + port_y, `./svg/ports/port${PORT_NUMS[port_counter]}.svg`, [z_index("1")]);
-    create_svg(x + shape_x, y + shape_y, `./svg/shapes/${el.port.toLowerCase()}.svg`, [z_index("2"), add_color("#000000"), scale("0.5")]);
+const createPort = (el) => {
+    let [port_width, port_height] = PORT_HEIGHT_WIDTH[PORT_NUMS[portCounter] -1];
+    let [port_x, port_y] = PORT_DISTANCE[PORT_NUMS[portCounter] -1];
+    let [ship_x, ship_y] = SHIP_DISTANCE[PORT_NUMS[portCounter] -1];
+    createSvg(port_width, port_height, x + port_x, y + port_y,`./svg/ports/port${PORT_NUMS[portCounter]}.svg`, [zIndex("2")]);
+    createSvg(5.76, 4.95, x + ship_x, y + ship_y, "./svg/ports/ship.svg", [zIndex("3")])
+    createSvg(3.6, 2.88, x + ship_x + 2, y + ship_y + 0.5, `./svg/shapes/${el.port.toLowerCase()}.svg`, [zIndex("4"), addColor("#000000"), scale("0.5")]);
     let address = el.port === "questionmark" ? `./svg/ports/num31.svg` : `./svg/ports/num21.svg`;
-    create_svg(x + shape_x + 4, y + shape_y + 19, address, [z_index("2"), add_color("#000000"), scale("0.5")]);
-    port_counter += 1;
+    createSvg(2.5,2.2, x + ship_x + 2.2, y + ship_y + 1.9, address, [zIndex("4"), addColor("#000000"), scale("0.5")]);
+    portCounter += 1;
 }
 
-function create_hexagons(plus_x, plus_y, list) {
+const createHexagons = (plus_x, plus_y, list) => {
     for (let i = 0; i < list.length; i++) {
         x += plus_x;
         y += plus_y;
-        create_svg(x,y,`./svg/hexagons/${list[i].hexagon_type}_hexagon.svg`);
+        createSvg(8.7, 10, x, y,`./svg/hexagons/${list[i].hexagon_type}_hexagon.svg`);
         if (list[i].hexagon_type === "water") continue;
-        create_svg(x + 34, y + 30, `./svg/shapes/${list[i].hexagon_type}.svg`, [z_index("1")])
-        if (list[i].hexagon_type === "desert") create_svg(x + 23, y + 55, "./svg/shapes/knight.svg", [z_index("1")]);
-        else create_svg(x + 41, y + 70, `./svg/nums/num${list[i].num}.svg`, [z_index("1")])
-        if (list[i].port !== "none") create_port(list[i]);
+        createSvg(3.6, 2.88 , x + 2.5, y + 2.3, `./svg/shapes/${list[i].hexagon_type}.svg`, [zIndex("1")])
+        if (list[i].hexagon_type === "desert") createSvg(1.8, 2.8, x + 1.2, y + 4.2, "./svg/shapes/knight.svg", [zIndex("1")]);
+        else createSvg(2.25, 1.98, x + 3.225 , y + 5.85, `./svg/nums/num${list[i].num}.svg`, [zIndex("1")])
+        if (list[i].port !== "none") createPort(list[i]);
     }
 }
 
-function create_diognal_right_down(list) {create_hexagons(DISTANCE_X, DISTANCE_Y, list);}
-function create_left_to_right(list) {create_hexagons(DISTANCE_X * 2, 0, list)}
-function create_diognal_right_up(list) {create_hexagons(DISTANCE_X, -DISTANCE_Y, list)}
-function create_diognal_left_up(list) {create_hexagons(-DISTANCE_X, -DISTANCE_Y, list);}
-function create_right_to_left(list) {create_hexagons(-DISTANCE_X * 2, 0, list);}
-function create_diognal_left_down(list) {create_hexagons(-DISTANCE_X, DISTANCE_Y, list)}
-function create_middle(list) {create_diognal_right_down(list);}
+const createRightDown = (list) => createHexagons(DISTANCE_X, DISTANCE_Y, list)
+const createLeftRight = (list) => createHexagons(DISTANCE_X * 2, 0, list)
+const createRightUp = (list) => createHexagons(DISTANCE_X, -DISTANCE_Y, list)
+const createLeftUp = (list) => createHexagons(-DISTANCE_X, -DISTANCE_Y, list)
+const createRightLeft = (list) => createHexagons(-DISTANCE_X * 2, 0, list)
+const createLeftDown = (list) => createHexagons(-DISTANCE_X, DISTANCE_Y, list)
+const createMiddle = (list) => createRightDown(list)
 
-export default function create_map(list) {
+const createMap = (list) => {
     let i = 0;
     let plus;
-    let function_array = [
-        create_diognal_right_down, create_left_to_right, create_diognal_right_up, 
-        create_diognal_left_up, create_right_to_left, create_diognal_left_down
+    let functionArray = [
+        createRightDown, createLeftRight, createRightUp, 
+        createLeftUp, createRightLeft, createLeftDown
     ];
     for (let len = 0; len < 3; len++) {
-        for (let j = 0; j < function_array.length; j++) {
+        for (let j = 0; j < functionArray.length; j++) {
             if (j === 0) plus = 4 - len;
-            else if (j == function_array.length - 1) plus = 2 - len;
+            else if (j == functionArray.length - 1) plus = 2 - len;
             else plus = 3 - len;
-            let current_list = list.slice(i, i + plus);
+            let currentList = list.slice(i, i + plus);
             i += plus;
-            function_array[j](current_list);
+            functionArray[j](currentList);
         }
     }
-    create_middle(list.slice(list.length -1, list.length));
+    createMiddle(list.slice(list.length -1, list.length));
 }
 
-export {create_svg}
+export {createSvg, createMap}

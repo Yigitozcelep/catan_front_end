@@ -1,43 +1,45 @@
-let add_color = (color) => {
-    return (my_svg, my_div) => {
-        let svgShapes = my_svg.documentElement.querySelectorAll('path');
+const addColor = (color) => {
+    return (mySvg, myDiv) => {
+        let svgShapes = mySvg.documentElement.querySelectorAll('path');
             svgShapes.forEach(function(shape) {
                 shape.setAttribute('fill', color);
         });
     }
 }
-let z_index = (z) => {
-    return (my_svg, my_div) => {
-        my_div.style.zIndex = z
+const zIndex = (z) => {
+    return (mySvg, myDiv) => {
+        myDiv.style.zIndex = z
     };
 }
 
-let counter = 0;
-let scale = (num) => {
-    return (my_svg, my_div) => {
-        let svgShapes = my_svg.documentElement.querySelectorAll('path');
+const counter = 0;
+const scale = (num) => {
+    return (mySvg, myDiv) => {
+        let svgShapes = mySvg.documentElement.querySelectorAll('path');
             svgShapes.forEach(function(shape) {
             shape.setAttribute("transform", `scale(${num})`);
         });
     }
 }
 
-let create_svg = async (cur_x, cur_y, address, funcs = []) => {
+const createSvg = async (width, height, curX, curY, address, funcs = []) => {
     let div = document.createElement("div");
     div.style.position = "absolute"
-    div.style.left = `${cur_x}px`;
-    div.style.top = `${cur_y}px`;
+    div.style.left = `${curX}vw`;
+    div.style.top = `${curY}vw`;
+    div.style.width = `${width}vw`
+    div.style.height = `${height}vw`
     let response = await fetch(address);
     let text = await response.text();
     let parser = new DOMParser();
-    let my_svg = parser.parseFromString(text, "image/svg+xml");
-    for (let func of funcs) func(my_svg, div);
-    my_svg = div.appendChild(my_svg.documentElement);
+    let mySvg = parser.parseFromString(text, "image/svg+xml");
+    for (let func of funcs) func(mySvg, div);
+    mySvg = div.appendChild(mySvg.documentElement);
     div = document.getElementById("main_div").appendChild(div);
     return div;
 }
 
-let waitListener = (element, listerName) => {
+const waitListener = (element, listerName) => {
     return new Promise((resolve, reject) => {
         let listener = (event) => {
             element.removeEventListener(listerName, listener);
@@ -47,4 +49,4 @@ let waitListener = (element, listerName) => {
     })
 }
 
-export {create_svg, add_color, z_index, scale, waitListener}
+export {createSvg, addColor, zIndex, scale, waitListener}
