@@ -39,10 +39,13 @@ const createSvg = async (width, height, curX, curY, address, funcs = []) => {
     return div;
 }
 
-const waitListener = (element, listerName) => {
+
+
+const waitListener = (element, listerName, funcs=[]) => {
     return new Promise((resolve, reject) => {
         let listener = (event) => {
             element.removeEventListener(listerName, listener);
+            for (let func of funcs) func();
             resolve(event);
         }
         element.addEventListener(listerName, listener);

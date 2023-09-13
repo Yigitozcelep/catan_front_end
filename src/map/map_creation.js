@@ -6,6 +6,7 @@ let y = 20
 const DISTANCE_X = 4.4; 
 const DISTANCE_Y = 7.65;
 
+
 let portCounter = 0;
 const PORT_NUMS = [1,2,3,3,4,5,5,6,1];
 const PORT_HEIGHT_WIDTH = [[4.5, 5.85], [5.49, 5.13],   [5.13, 5.4],    [4.41, 5.85], [5.04, 5.49], [5.04, 5.67]]
