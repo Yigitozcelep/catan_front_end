@@ -12,6 +12,10 @@ const zIndex = (z) => {
     };
 }
 
+const addClass = (name) => {
+    return (mySvg, myDiv) => {myDiv.classList.add(name)}
+}
+
 const counter = 0;
 const scale = (num) => {
     return (mySvg, myDiv) => {
@@ -43,13 +47,34 @@ const createSvg = async (width, height, curX, curY, address, funcs = []) => {
 
 const waitListener = (element, listerName, funcs=[]) => {
     return new Promise((resolve, reject) => {
-        let listener = (event) => {
+        let listener = async (event) => {
             element.removeEventListener(listerName, listener);
-            for (let func of funcs) func();
+            for (let func of funcs) await func();
             resolve(event);
         }
         element.addEventListener(listerName, listener);
     })
 }
 
-export {createSvg, addColor, zIndex, scale, waitListener}
+
+function waitForElm(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+}
+
+export {createSvg, addColor, zIndex, scale, addClass, waitListener, waitForElm}

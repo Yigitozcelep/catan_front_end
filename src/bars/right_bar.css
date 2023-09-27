@@ -15,7 +15,7 @@ body {
 }
 
 
-#end_turn_button {
+.end_turn_button {
     position: absolute;
     width: 10vw;
     height: 4vw;

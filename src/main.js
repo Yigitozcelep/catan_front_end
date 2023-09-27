@@ -1,10 +1,11 @@
 import {createSvg, createMap} from "./map/map_creation.js";
-import { waitListener, zIndex } from "./helper_functions.js";
+import { waitListener, zIndex, waitForElm } from "./helper_functions.js";
 import {createItems} from "./bars/right_bar.js"
 
 
 const invoke = window.__TAURI__.invoke
 const MAIN_DIV = document.getElementById("main_div");
+const RIGHT_BAR_DIV = document.getElementById("right_bar");
 
 const createRandomMap = () => {
     invoke('get_random_map').then((gameString) => {
@@ -18,13 +19,12 @@ const createRandomMap = () => {
 
 const getPlayerInfo = async () => JSON.parse(await invoke("get_players"))
 
+const getCurrentPlayer = async () => JSON.parse(await invoke("get_current_player"))
+
 const getBankInfo = async () => JSON.parse(await invoke("get_bank"));
     
 const getDeckInfo = async () => JSON.parse(await invoke("get_deck"));
 
-const createRightBar = () => {
-
-}
 
 const get_coor = (list) => {
     let num = Math.floor(list[0] / 4);
@@ -34,7 +34,8 @@ const get_coor = (list) => {
 }
 
 const nextRound = () => {
-
+    console.log("gelyor")
+    invoke("end_turn");
 }
 
 const buildHouse = () => {
@@ -50,7 +51,13 @@ const buyDevCard = () => {
 }
 
 
-const getHouses = async (buttons, events, promises) => {
+const COLORS = ["blue", "green", "orange", "red"]
+const createHouse = async (i, j, left, top, player) => {
+    await createSvg(3.4,2.3, left - 0.6, top - 0.2, `./svg/houses/${COLORS[player]}_house.svg`, [zIndex("10")]);
+    await invoke("make_house", {x: i, y: j});
+}
+
+const getHouses = async (buttons, events, promises, currentPlayer) => {
     let res = eval(await invoke("get_housable_points"));
     let counter = 0;
     for (let part of res) {
@@ -58,7 +65,7 @@ const getHouses = async (buttons, events, promises) => {
         let [left, top] = get_coor(part);
         promises.push(createSvg(2.2, 2.2, left, top,"./svg/movable_point/movable_point.svg", [zIndex("6")]).then(div => {
             buttons.push(div);
-            events.push(waitListener(div, "click"))
+            events.push(waitListener(div, "click", [() => createHouse(part[0], part[1], left, top, currentPlayer)]))
         }));
     }
 }
@@ -72,31 +79,52 @@ const getDevCards = (buttons, events, promises) => {
 }
 
 
-const createButtons = async (buttons, events, promises) => {
-    await getHouses(buttons, events, promises);
-    await getRoads(buttons, events, promises);
-    await getDevCards(buttons, events, promises);
+const createButtons = async (buttons, events, promises, currentPlayer) => {
+    await getHouses(buttons, events, promises, currentPlayer);
+    getRoads(buttons, events, promises);
+    getDevCards(buttons, events, promises);
 }
 
-const start = async () => {
+
+const createRightBar = async () => {
     const bankInfo = await getBankInfo();
     const playerInfo = await getPlayerInfo();
     const deckInfo = await getDeckInfo();
-    createRandomMap();
     createItems(bankInfo, deckInfo, playerInfo);
-    for (let i = 0; i < 2; i++) {
-        let promises = []
-        let buttons = [];
-        let events = [];
-        await createButtons(buttons, events, promises);
-        await Promise.all(promises)
-        if (events.length === 0) nextRound();
-        else {
-            await Promise.race(events);
-            for (let button of buttons) button.parentNode.removeChild(button);
+}
 
-        }
+
+const createRound = async () => {
+    const currentPlayer = await getCurrentPlayer();
+    let promises = [];
+    let buttons = [];
+    let events = [];
+    await createButtons(buttons, events, promises, currentPlayer);
+    await Promise.all(promises)
+    if (events.length === 0) nextRound();
+    else {
+        const button = await waitForElm(".end_turn_button");
+        events.push(waitListener(button, "click", [() => {
+                nextRound();
+                while (RIGHT_BAR_DIV.firstChild) {
+                    RIGHT_BAR_DIV.removeChild(RIGHT_BAR_DIV.lastChild)
+                }
+                createRightBar();
+                createRound();
+            }])
+        )
+        await Promise.race(events);
+        for (let button of buttons) button.parentNode.removeChild(button);
     }
 }
 
-await start()
+
+await createRightBar();
+createRound();
+
+
+createRandomMap();
+await start();
+
+
+export {createRightBar, createRound}

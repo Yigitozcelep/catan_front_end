@@ -1,7 +1,9 @@
 import { scale } from "../helper_functions.js";
 const right_bar_div = document.getElementById("right_bar");
 
+
 const createItems = (bankInfo, deckInfo, playerInfo) => {
+    createEndTurn();
     const resources_names = ["grain", "lumber", "brick", "ore", "wool"]
     const dev_names = ["knight_card", "victory_card", "any_2_card", "monopoly_card", "road_card"]
     const megaParentDiv = createContainerDiv(100, 80, "column");
@@ -17,8 +19,6 @@ const createItems = (bankInfo, deckInfo, playerInfo) => {
     bankDiv.appendChild(createResource(deckInfo.weights, dev_names, "../svg/dev_cards/"))
     megaParentDiv.appendChild(bankDiv);
     for (let player of playerInfo) {
-
-        console.log(player)
         const resource_counts = [player.grain, player.lumber, player.brick, player.ore, player.wool];
         const dev_counts = [player.dev_knight, player.dev_victory, player.dev_any_2, player.dev_monopoly, player.dev_road];
         const playerDiv = createContainerDiv(90, 17, "column");
@@ -32,6 +32,13 @@ const createItems = (bankInfo, deckInfo, playerInfo) => {
     }
     right_bar_div.appendChild(megaParentDiv)
     return megaParentDiv;
+}
+
+const createEndTurn = () => {
+    const button = document.createElement("button");
+    button.textContent = "END TURN" ;
+    button.classList.add("end_turn_button");
+    right_bar_div.appendChild(button);
 }
 
 const createContainerDiv = (width, height, flexDirection="row") => {
@@ -55,10 +62,6 @@ const createTopPart = (address) => {
     return containerDiv;
 }
 
-const createTopIconsDevCards = () => {
-
-}
-
 const createResource = (counts, names, address) => {
     const mainContainer = createContainerDiv(100, 25, "row");
     mainContainer.style.justifyContent = "space-around"
@@ -70,8 +73,7 @@ const createResource = (counts, names, address) => {
         currentContainer.style.justifyContent = "space-around"
         currentContainer.style.alignItems = "center"
         const image = document.createElement("img");
-
-        console.log(address + `${name}.svg`)
+            
         image.src = address + `${name}.svg`
         image.style.width = "60%";
         image.style.height = "80%";
