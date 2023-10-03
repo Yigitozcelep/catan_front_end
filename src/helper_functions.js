@@ -6,6 +6,7 @@ const addColor = (color) => {
         });
     }
 }
+
 const zIndex = (z) => {
     return (mySvg, myDiv) => {
         myDiv.style.zIndex = z

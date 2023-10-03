@@ -34,7 +34,6 @@ fn make_house(x: usize, y: usize) {
 #[tauri::command]
 fn end_turn() {
     communucation::next_turn();
-    println!("geliyor");
 }
 
 fn main() {
